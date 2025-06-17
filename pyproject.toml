@@ -1,0 +1,58 @@
+[project]
+name = "museion"
+version = "0.1.0"
+description = "From-Scratch text-to-image using Latent Diffusion"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Dave Savostyanov", email = "ds@artifactory.ai" }
+]
+classifiers = ["Programming Language :: Python :: 3"]
+license = { text = "MIT" }
+dependencies = [
+    "pyright>=1.1.400",
+    "ruff>=0.11.8",
+    "pre-commit>=4.2.0",
+    "jupyterlab>=4.4.1",
+    "nbstripout>=0.8.1",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+exclude = ["venv*", ".venv*", ".git", "adhoc"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "ANN"]
+ignore = [
+    "ANN101",  # Missing type annotation for `self` in method
+    "ANN204",  # Missing return type annotation for special method `__*__`
+    "ANN401",  # Dynamically typed expressions (Any) are disallowed
+]
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+combine-as-imports = true
+known-first-party = ["museion"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.pyright]
+reportImplicitStringConcatenation = "none"
+reportMissingParameterType = true
+reportMissingTypeArgument = true
+reportUnknownMemberType = false
+reportUnknownParameterType = false
+reportUnknownVariableType = false
+reportUntypedFunctionDecorator = false
+typeCheckingMode = "basic"
+useLibraryCodeForTypes = true
+reportGeneralTypeIssues = "error"
+reportReturnType = "error"
+pythonPath = ["src"]
+pythonVersion = "3.11"
+venvPath = ".venv"
