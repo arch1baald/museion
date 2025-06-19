@@ -5,6 +5,8 @@ set -eo pipefail
 SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPTPATH"
 
+export PYTHONPATH="$SCRIPTPATH/src:$PYTHONPATH"
+
 if ! command -v uv &> /dev/null; then
     echo "uv utility not found. Please install it: https://docs.astral.sh/uv/getting-started/installation/"
 fi
@@ -27,7 +29,7 @@ show_help() {
     echo ""
     echo "PYTHON CLI:"
     if [ -f "src/museion/cli.py" ]; then
-        uv run src/museion/cli.py --help 2>/dev/null
+        uv run -m museion.cli --help 2>/dev/null
     else
         echo "Error: Main CLI not found at src/museion/cli.py"
         exit 1
@@ -65,7 +67,7 @@ case "$SUBCOMMAND" in
     *)
         # Fallback to main CLI application
         if [ -f "src/museion/cli.py" ]; then
-            exec uv run src/museion/cli.py "$SUBCOMMAND" "$@"
+            exec uv run -m museion.cli "$SUBCOMMAND" "$@"
         else
             echo "Error: Main CLI not found at src/museion/cli.py"
             exit 1

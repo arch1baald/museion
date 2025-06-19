@@ -37,9 +37,11 @@ def app_echo(text: str = "Hello, World!") -> None:
     typer.echo(text)
 
 
-@app.command(name="echo2", help="Echo a message")
-def app_echo2(text: str = "Hello, World!") -> None:
-    typer.echo(text)
+@app.command(name="print-root", help="Print the root directory")
+def app_print_root() -> None:
+    from museion.constants import ROOT
+
+    print(ROOT)
 
 
 if __name__ == "__main__":
