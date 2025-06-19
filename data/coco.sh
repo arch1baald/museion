@@ -108,12 +108,14 @@ download_split() {
     fi
 
     # Extract if directory doesn't exist or clean mode is enabled
-    if [ ! -d "coco/$split" ] || [ "$CLEAN" = true ]; then
+    if [ ! -d "coco/${split}2014" ] || [ "$CLEAN" = true ]; then
         echo "Extracting $split split..."
         unzip -q "coco/${split}2014.zip" -d "coco/"
         rm "coco/${split}2014.zip"
+        echo "Number of files in ${split}2014: $(ls "coco/${split}2014/" | wc -l)"
+        echo "Size of ${split}2014: $(du -sh "coco/${split}2014/" | awk '{print $1}')"
     else
-        echo "Directory coco/$split already exists, skipping extraction"
+        echo "Directory coco/${split}2014 already exists, skipping extraction"
     fi
 }
 
