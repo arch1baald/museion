@@ -13,10 +13,3 @@ uv sync
 ```bash
 ./ucli --help
 ```
-
-or
-```bash
-alias ucli='./ucli'
-
-ucli --help
-```
