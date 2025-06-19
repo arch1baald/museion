@@ -7,7 +7,68 @@ cd "$SCRIPTPATH"
 
 if ! command -v uv &> /dev/null; then
     echo "uv utility not found. Please install it: https://docs.astral.sh/uv/getting-started/installation/"
-    exit 1
 fi
 
-uv run src/museion/cli.py "$@"
+# Function to show help for all subapplications
+show_help() {
+    echo "Universal Command Line Interface (UCLI)"
+    echo ""
+    echo "Examples:"
+    echo "  $0 echo --text 'asdf'   # Python CLI: echo test"
+    echo "  $0 echo --help          # Python CLI: echo help"
+    echo "  $0 coco --help          # Show COCO dataset help"
+    echo "  $0 --help               # Show this help"
+    echo ""
+    echo "Usage: $0 [SUBCOMMAND] [OPTIONS]"
+    echo ""
+    echo "SUBCOMMANDS:"
+    echo "  coco       COCO dataset management"
+    echo "  ops        Operations and deployment commands (coming soon)"
+    echo ""
+    echo "PYTHON CLI:"
+    if [ -f "src/museion/cli.py" ]; then
+        uv run src/museion/cli.py --help 2>/dev/null
+    else
+        echo "Error: Main CLI not found at src/museion/cli.py"
+        exit 1
+    fi
+}
+
+# Check if no arguments provided
+if [ $# -eq 0 ]; then
+    show_help
+    exit 0
+fi
+
+# Parse the first argument as subcommand
+SUBCOMMAND="$1"
+shift  # Remove the first argument, pass the rest to subcommands
+
+case "$SUBCOMMAND" in
+    coco)
+        if [ -f "data/coco.sh" ]; then
+            exec ./data/coco.sh "$@"
+        else
+            echo "Error: COCO script not found at data/coco.sh"
+            exit 1
+        fi
+        ;;
+    ops)
+        echo "Operations subcommand is coming soon!"
+        echo "This will handle deployment and operations commands."
+        exit 1
+        ;;
+    --help|-h)
+        show_help
+        exit 0
+        ;;
+    *)
+        # Fallback to main CLI application
+        if [ -f "src/museion/cli.py" ]; then
+            exec uv run src/museion/cli.py "$SUBCOMMAND" "$@"
+        else
+            echo "Error: Main CLI not found at src/museion/cli.py"
+            exit 1
+        fi
+        ;;
+esac
