@@ -111,6 +111,7 @@ download_split() {
     if [ ! -d "coco/$split" ] || [ "$CLEAN" = true ]; then
         echo "Extracting $split split..."
         unzip -q "coco/${split}2014.zip" -d "coco/"
+        rm "coco/${split}2014.zip"
     else
         echo "Directory coco/$split already exists, skipping extraction"
     fi
@@ -131,6 +132,7 @@ download_annotations() {
     if [ ! -d "coco/annotations" ] || [ "$CLEAN" = true ]; then
         echo "Extracting annotations..."
         unzip -q "coco/annotations_trainval2014.zip" -d "coco/"
+        rm "coco/annotations_trainval2014.zip"
     else
         echo "Directory coco/annotations already exists, skipping extraction"
     fi
