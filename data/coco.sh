@@ -2,10 +2,8 @@
 
 set -eo pipefail
 
-# Get project root path
 SCRIPTPATH="$(cd "$(dirname "$0")" && pwd)"
 echo "SCRIPTPATH: $SCRIPTPATH"
-
 cd "$SCRIPTPATH"
 
 # Function to show help
@@ -83,35 +81,17 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# Clean entire coco directory if --clean flag is set
+if [ "$CLEAN" = true ]; then
+    echo "Cleaning entire coco directory..."
+    if [ -d "coco" ]; then
+        rm -rf "coco"
+        echo "Removed entire coco directory"
+    fi
+fi
+
 # Create data directory
 mkdir -m 777 -p coco
-
-# Function to clean split files
-clean_split() {
-    local split=$1
-    echo "Cleaning $split split..."
-    if [ -d "coco/$split" ]; then
-        rm -rf "coco/$split"
-        echo "Removed directory coco/$split"
-    fi
-    if [ -f "coco/${split}.zip" ]; then
-        rm -f "coco/${split}.zip"
-        echo "Removed file coco/${split}.zip"
-    fi
-}
-
-# Function to clean annotations
-clean_annotations() {
-    echo "Cleaning annotations..."
-    if [ -d "coco/annotations" ]; then
-        rm -rf "coco/annotations"
-        echo "Removed directory coco/annotations"
-    fi
-    if [ -f "coco/annotations_trainval2014.zip" ]; then
-        rm -f "coco/annotations_trainval2014.zip"
-        echo "Removed file coco/annotations_trainval2014.zip"
-    fi
-}
 
 # Function for downloading and extracting split
 download_split() {
@@ -121,23 +101,16 @@ download_split() {
     echo "Downloading $split split..."
 
     # Check if file already exists
-    if [ -f "coco/${split}.zip" ] && [ "$CLEAN" = false ]; then
-        echo "File coco/${split}.zip already exists, skipping download"
+    if [ -f "coco/${split}2014.zip" ] && [ "$CLEAN" = false ]; then
+        echo "File coco/${split}2014.zip already exists, skipping download"
     else
-        wget -O "coco/${split}.zip" "$url"
+        wget --progress=dot:giga --output-file=/dev/stdout -O "coco/${split}2014.zip" "$url"
     fi
 
     # Extract if directory doesn't exist or clean mode is enabled
     if [ ! -d "coco/$split" ] || [ "$CLEAN" = true ]; then
         echo "Extracting $split split..."
-        unzip -q "coco/${split}.zip" -d "coco/"
-
-        # Rename directory if needed (COCO extracts as train2014/val2014)
-        if [ "$split" = "train" ] && [ -d "coco/train2014" ]; then
-            mv "coco/train2014" "coco/train"
-        elif [ "$split" = "val" ] && [ -d "coco/val2014" ]; then
-            mv "coco/val2014" "coco/val"
-        fi
+        unzip -q "coco/${split}2014.zip" -d "coco/"
     else
         echo "Directory coco/$split already exists, skipping extraction"
     fi
@@ -151,7 +124,7 @@ download_annotations() {
     if [ -f "coco/annotations_trainval2014.zip" ] && [ "$CLEAN" = false ]; then
         echo "File coco/annotations_trainval2014.zip already exists, skipping download"
     else
-        wget -O "coco/annotations_trainval2014.zip" "http://images.cocodataset.org/annotations/annotations_trainval2014.zip"
+        wget --progress=dot:giga --output-file=/dev/stdout -O "coco/annotations_trainval2014.zip" "http://images.cocodataset.org/annotations/annotations_trainval2014.zip"
     fi
 
     # Extract if directory doesn't exist or clean mode is enabled
@@ -162,19 +135,6 @@ download_annotations() {
         echo "Directory coco/annotations already exists, skipping extraction"
     fi
 }
-
-# Clean files if needed
-if [ "$CLEAN" = true ]; then
-    if [ "$DOWNLOAD_VAL" = true ]; then
-        clean_split "val"
-    fi
-    if [ "$DOWNLOAD_TRAIN" = true ]; then
-        clean_split "train"
-    fi
-    if [ "$DOWNLOAD_ANNOTATIONS" = true ]; then
-        clean_annotations
-    fi
-fi
 
 # Download splits and annotations
 if [ "$DOWNLOAD_VAL" = true ]; then
