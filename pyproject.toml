@@ -13,10 +13,18 @@ dependencies = [
     "pyright>=1.1.400",
     "ruff>=0.11.8",
     "pre-commit>=4.2.0",
-    "jupyterlab>=4.4.1",
-    "nbstripout>=0.8.1",
     "typer>=0.16.0",
+    "pycocotools>=2.0.10",
+    "torch>=2.7.1",
+    "torchvision>=0.22.1",
 ]
+
+[dependency-groups]
+dev = [
+    "jupyterlab>=4.4.3",
+    "nbstripout>=0.8.1",
+]
+
 
 [tool.ruff]
 line-length = 120

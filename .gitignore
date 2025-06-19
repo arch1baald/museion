@@ -198,3 +198,6 @@ nohup.out
 
 # Data
 data/coco
+
+# Scripts
+adhoc/
